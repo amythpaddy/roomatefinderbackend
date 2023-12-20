@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "roomatefinder-483b3",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
