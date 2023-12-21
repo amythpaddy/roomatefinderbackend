@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import { getUserDetail } from "../../controllers/usersController";
 const {
   putData,
   createRoomatePost,
@@ -21,5 +22,9 @@ module.exports = function (app: Express) {
 
   app.post("/v1/createUser", (req: Request, res: Response) => {
     createUser(req.body, res);
+  });
+
+  app.post("/v1/getUserDetail", (req: Request, res: Response) => {
+    getUserDetail(req.body, res);
   });
 };
