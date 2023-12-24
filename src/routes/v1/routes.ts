@@ -17,7 +17,9 @@ module.exports = function (app: Express) {
   });
 
   app.get("/v1/allPost", (req: Request, res: Response) => {
-    listRoomatePost(res);
+    listRoomatePost(res).then((val) => {
+      res.send(val);
+    });
   });
 
   app.post("/v1/createUser", (req: Request, res: Response) => {
@@ -25,6 +27,8 @@ module.exports = function (app: Express) {
   });
 
   app.post("/v1/getUserDetail", (req: Request, res: Response) => {
-    getUserDetail(req.body, res);
+    getUserDetail(req.body.userid).then((value) => {
+      res.send(value);
+    });
   });
 };

@@ -2,6 +2,8 @@ import { Response, Request } from "express";
 import { TABLE_ROOMATE_POSTS } from "../utils/constants";
 import { PostModel } from "../models/postModels";
 const { getDbObject } = require("../utils/firestoreHelper");
+import { getUserDetail } from "./usersController";
+import { UserResponseModel } from "../models/userModels";
 
 const db = getDbObject();
 
@@ -23,20 +25,28 @@ export async function createRoomatePost(
   }
 }
 
-export async function listRoomatePost(res: Response): Promise<void> {
+export async function listRoomatePost(res: Response): Promise<any> {
   const snapshot = await db.collection(TABLE_ROOMATE_POSTS).get();
   try {
     var posts: PostModel[] = [];
-    snapshot.forEach((doc: any) => {
-      // getUserData(doc.data().userid);
+    await snapshot.forEach((doc: any) => {
       posts.push({
         message: doc.data().message,
         title: doc.data().title,
         userid: doc.data().userid,
       });
-      console.log(doc.id, "=>", doc.data());
     });
-    res.send(posts);
+    for (var i = 0; i < posts.length; i++) {
+      const user: UserResponseModel = await getUserDetail(posts[i].userid);
+      posts[i].userdata = user.data;
+    }
+    // todo: make the map function async
+    // posts.map((post) => {
+    //   getUserDetail(post.userid).then((user) => {
+    //     post.userdata = user.data;
+    //   });
+    // });
+    return posts;
   } catch (ex) {
     res.send("Error");
   }

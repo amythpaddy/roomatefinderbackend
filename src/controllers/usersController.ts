@@ -22,33 +22,28 @@ export async function createUser(
 }
 
 export async function getUserDetail(
-  postBody: UserModel,
-  res: Response
-): Promise<void> {
+  userid: string
+): Promise<UserResponseModel> {
+  const userdetail: UserResponseModel = {
+    error: true,
+    message: "no user data found",
+  };
+
   const db = getDbObject();
-  const snapshot = await db
-    .collection("user_detail")
-    .doc(postBody.userid)
-    .get();
+  const snapshot = await db.collection("user_detail").doc(userid).get();
   try {
-    var userdetail: UserResponseModel = {
-      error: true,
-      message: "no user data found",
-    };
     if (snapshot.exists) {
-      userdetail = {
-        error: false,
-        message: "",
-        data: {
-          useremail: snapshot.data().useremail,
-          userphone: snapshot.data().userphone,
-          userid: snapshot.data().userid,
-          username: snapshot.data().username,
-        },
+      userdetail.error = false;
+      userdetail.message = "";
+      userdetail.data = {
+        useremail: snapshot.data().useremail,
+        userphone: snapshot.data().userphone,
+        userid: snapshot.data().userid,
+        username: snapshot.data().username,
       };
     }
-    res.send(userdetail);
   } catch (ex) {
-    res.send("Error");
+    userdetail.message = "error fetching userdata";
   }
+  return userdetail;
 }
