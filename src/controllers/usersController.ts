@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { UserModel, UserResponseModel } from "../models/userModels";
+import { TABLE_USER_DETAIL } from "../utils/constants";
 const { getDbObject } = require("../utils/firestoreHelper");
 
 export async function createUser(
@@ -7,13 +8,15 @@ export async function createUser(
   res: Response
 ): Promise<void> {
   const db = getDbObject();
-  const docRef = db.collection("user_detail").doc(postBody.userid);
+  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userid);
   try {
     await docRef.set({
       username: postBody.username,
       useremail: postBody.useremail,
       userid: postBody.userid,
       userphone: postBody.userphone ?? "",
+      lookingForRoommates: postBody.lookingForRoommates ?? true,
+      hasHousing: postBody.hasHousing ?? false,
     });
     res.send({ message: "User created Successfully", code: 200 });
   } catch (ex) {
@@ -30,7 +33,7 @@ export async function getUserDetail(
   };
 
   const db = getDbObject();
-  const snapshot = await db.collection("user_detail").doc(userid).get();
+  const snapshot = await db.collection(TABLE_USER_DETAIL).doc(userid).get();
   try {
     if (snapshot.exists) {
       userdetail.error = false;
@@ -40,10 +43,28 @@ export async function getUserDetail(
         userphone: snapshot.data().userphone,
         userid: snapshot.data().userid,
         username: snapshot.data().username,
+        lookingForRoommates: snapshot.data().lookingForRoommates ?? true,
+        hasHousing: snapshot.data().hasHousing ?? false,
       };
     }
   } catch (ex) {
     userdetail.message = "error fetching userdata";
   }
   return userdetail;
+}
+
+export async function updateUser(postBody: UserModel): Promise<any> {
+  const db = getDbObject();
+  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userid);
+  try {
+    await docRef.update({
+      username: postBody.username,
+      userphone: postBody.userphone ?? "",
+      lookingForRoommates: postBody.lookingForRoommates ?? true,
+      hasHousing: postBody.hasHousing ?? false,
+    });
+  } catch (ex) {
+    return { message: "Error updating detail", code: 500 };
+  }
+  return { message: "User Detail Updated", code: 200 };
 }

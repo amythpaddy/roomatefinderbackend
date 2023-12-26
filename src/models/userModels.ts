@@ -3,6 +3,8 @@ export type UserModel = {
   username: string;
   useremail: string;
   userphone: string | undefined;
+  hasHousing?: boolean;
+  lookingForRoommates?: boolean;
 };
 
 export type UserResponseModel = {
