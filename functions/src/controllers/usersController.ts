@@ -8,17 +8,23 @@ export async function createUser(
   res: Response
 ): Promise<void> {
   const db = getDbObject();
-  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userid);
+  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userId);
   try {
     await docRef.set({
-      username: postBody.username,
-      useremail: postBody.useremail,
-      userid: postBody.userid,
-      userphone: postBody.userphone ?? "",
+      firstName: postBody.firstName,
+      middleName: postBody.middleName ?? "",
+      lastName: postBody.lastName,
+      collegeEmail: postBody.collegeEmail,
+      userEmail: postBody.userEmail,
+      userId: postBody.userId,
+      userPhone: postBody.userPhone ?? "",
       lookingForRoommates: postBody.lookingForRoommates ?? true,
       hasHousing: postBody.hasHousing ?? false,
     });
-    res.send({ message: "User created Successfully", code: 200 });
+    res.send({
+      message: "User created Successfully",
+      code: 200,
+    });
   } catch (ex) {
     res.send({ message: "Error creating user", code: 500 });
   }
@@ -39,10 +45,13 @@ export async function getUserDetail(
       userdetail.error = false;
       userdetail.message = "";
       userdetail.data = {
-        useremail: snapshot.data().useremail,
-        userphone: snapshot.data().userphone,
-        userid: snapshot.data().userid,
-        username: snapshot.data().username,
+        userEmail: snapshot.data().userEmail,
+        userPhone: snapshot.data().userPhone,
+        userId: snapshot.data().userid,
+        firstName: snapshot.data().firstName,
+        middleName: snapshot.data().middleName ?? "",
+        lastName: snapshot.data().lastName,
+        collegeEmail: snapshot.data().collegeEmail,
         lookingForRoommates: snapshot.data().lookingForRoommates ?? true,
         hasHousing: snapshot.data().hasHousing ?? false,
       };
@@ -55,11 +64,13 @@ export async function getUserDetail(
 
 export async function updateUser(postBody: UserModel): Promise<any> {
   const db = getDbObject();
-  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userid);
+  const docRef = db.collection(TABLE_USER_DETAIL).doc(postBody.userId);
   try {
     await docRef.update({
-      username: postBody.username,
-      userphone: postBody.userphone ?? "",
+      firstName: postBody.firstName,
+      middleName: postBody.middleName,
+      lastName: postBody.lastName,
+      userphone: postBody.userPhone ?? "",
       lookingForRoommates: postBody.lookingForRoommates ?? true,
       hasHousing: postBody.hasHousing ?? false,
     });

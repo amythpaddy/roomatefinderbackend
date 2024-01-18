@@ -1,8 +1,11 @@
 export type UserModel = {
-  userid: string;
-  username: string;
-  useremail: string;
-  userphone: string | undefined;
+  userId: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  collegeEmail: string;
+  userEmail: string;
+  userPhone: string | undefined;
   hasHousing?: boolean;
   lookingForRoommates?: boolean;
 };
