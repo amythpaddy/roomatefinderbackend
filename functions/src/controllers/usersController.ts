@@ -19,7 +19,7 @@ export async function createUser(
       userId: postBody.userId,
       userPhone: postBody.userPhone ?? "",
       lookingForRoommates: postBody.lookingForRoommates ?? true,
-      hasHousing: postBody.hasHousing ?? false,
+      haveHousing: postBody.haveHousing ?? false,
     });
     res.send({
       message: "User created Successfully",
@@ -47,13 +47,13 @@ export async function getUserDetail(
       userdetail.data = {
         userEmail: snapshot.data().userEmail,
         userPhone: snapshot.data().userPhone,
-        userId: snapshot.data().userid,
+        userId: snapshot.data().userId ?? snapshot.data().userid,
         firstName: snapshot.data().firstName,
         middleName: snapshot.data().middleName ?? "",
         lastName: snapshot.data().lastName,
         collegeEmail: snapshot.data().collegeEmail,
         lookingForRoommates: snapshot.data().lookingForRoommates ?? true,
-        hasHousing: snapshot.data().hasHousing ?? false,
+        haveHousing: snapshot.data().hasHousing ?? false,
       };
     }
   } catch (ex) {
@@ -72,10 +72,52 @@ export async function updateUser(postBody: UserModel): Promise<any> {
       lastName: postBody.lastName,
       userphone: postBody.userPhone ?? "",
       lookingForRoommates: postBody.lookingForRoommates ?? true,
-      hasHousing: postBody.hasHousing ?? false,
+      haveHousing: postBody.haveHousing ?? false,
     });
   } catch (ex) {
     return { message: "Error updating detail", code: 500 };
   }
   return { message: "User Detail Updated", code: 200 };
+}
+
+export async function getUserProfile(
+  userid: string
+): Promise<UserResponseModel> {
+  const userdetail: UserResponseModel = {
+    error: true,
+    message: "no user data found",
+  };
+
+  const db = getDbObject();
+  const snapshot = await db.collection(TABLE_USER_DETAIL).doc(userid).get();
+  try {
+    if (snapshot.exists) {
+      userdetail.error = false;
+      userdetail.message = "";
+      userdetail.data = {
+        userEmail: snapshot.data().userEmail,
+        userPhone: snapshot.data().userPhone,
+        userId: snapshot.data().userId ?? snapshot.data().userid,
+        firstName: snapshot.data().firstName,
+        middleName: snapshot.data().middleName ?? "",
+        lastName: snapshot.data().lastName,
+        collegeEmail: snapshot.data().collegeEmail,
+        lookingForRoommates: snapshot.data().lookingForRoommates ?? true,
+        haveHousing: snapshot.data().hasHousing ?? false,
+        availabilityDate: snapshot.data().availabilityDate,
+        college: snapshot.data().college,
+        countryOfOrigin: snapshot.data().countryOfOrigin,
+        distanceFromCollege: snapshot.data().distanceFromCollege,
+        gender: snapshot.data().gender,
+        havePet: snapshot.data().havePet,
+        major: snapshot.data().major,
+        race: snapshot.data().race,
+        smoking: snapshot.data().smoking,
+        userAge: snapshot.data().userAge,
+      };
+    }
+  } catch (ex) {
+    userdetail.message = "error fetching userdata";
+  }
+  return userdetail;
 }

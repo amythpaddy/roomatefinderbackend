@@ -1,5 +1,9 @@
 import { Express, Request, Response } from "express";
-import { getUserDetail, updateUser } from "../../controllers/usersController";
+import {
+  getUserDetail,
+  getUserProfile,
+  updateUser,
+} from "../../controllers/usersController";
 import { auth } from "../../middlewares/auth";
 import {
   createRoomatePost,
@@ -27,13 +31,19 @@ module.exports = function (app: Express) {
   });
 
   app.post("/v1/getUserDetail", (req: Request, res: Response) => {
-    getUserDetail(req.body.userid).then((value) => {
+    getUserDetail(req.body.userId).then((value) => {
       res.send(value);
     });
   });
 
   app.put("/v1/updateUserDetail", auth, (req: Request, res: Response) => {
     updateUser(req.body).then((value) => {
+      res.send(value);
+    });
+  });
+
+  app.post("/v1/getUserProfile", auth, (req: Request, res: Response) => {
+    getUserProfile(req.body.userId).then((value) => {
       res.send(value);
     });
   });
